@@ -18,7 +18,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PostMapping
+    @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponse createProduct(@RequestBody ProductRequest productRequest) {
         return productService.createProduct(productRequest);
@@ -29,10 +29,7 @@ public class ProductController {
     public List<ProductResponse> getAllProduct() {
         return productService.getAllProduct();
     }
-    @GetMapping("/{id}")
-    public ProductResponse getProductById(@PathVariable String id){
-        return productService.getProductById(id);
-    }
+
     @PutMapping("/{id}")
     public ProductResponse updateProduct(@PathVariable String id,@RequestBody ProductRequest request){
         return productService.updateProduct(id,request);

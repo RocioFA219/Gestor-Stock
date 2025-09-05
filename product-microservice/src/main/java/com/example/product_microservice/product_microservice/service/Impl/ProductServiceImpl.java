@@ -8,6 +8,7 @@ import com.example.product_microservice.product_microservice.dto.ProductResponse
 import com.example.product_microservice.product_microservice.model.Product;
 import com.example.product_microservice.product_microservice.repository.ProductRepository;
 import com.example.product_microservice.product_microservice.service.ProductService;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,9 @@ public class ProductServiceImpl implements ProductService {
                 .build();
         productRepository.save(product);
         log.info("El producto se creo correctamente");
+
         InventoryRequest inventoryRequest = new InventoryRequest(product.getId(), 0);
-        InventoryResponse inventoryResponse = inventoryClient.createInventory(inventoryRequest);
+        InventoryResponse inventoryResponse = inventoryClient.createStock(inventoryRequest);
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
@@ -42,6 +44,28 @@ public class ProductServiceImpl implements ProductService {
                 product.getSupplier(),
                 inventoryResponse.stock()
         );
+    }
+    public List<ProductResponse> getAllProduct(){
+        return productRepository.findAll()
+                .stream()
+                .map(product -> {
+                    int stock = 0;
+                    try {
+                        InventoryResponse inventoryResponse = inventoryClient.getInventoryById(product.getId());
+                        stock = inventoryResponse.stock();
+                    }catch (FeignException.FeignClientException.NotFound e) { //Captura el 404
+                        log.warn("Error al obtener inventario para el producto");
+                    }
+                        return new ProductResponse(
+                                product.getId(),
+                                product.getName(),
+                                product.getDescription(),
+                                product.getPrice(),
+                                product.getSupplier(),
+                                stock
+                        );
+                })
+                .toList();
     }
     public ProductResponse getProductById(String id){
         Product product = productRepository.findById(id)
@@ -56,25 +80,9 @@ public class ProductServiceImpl implements ProductService {
                 inventoryResponse.stock()
         );
     }
-    public List<ProductResponse> getAllProduct(){
-        return productRepository.findAll()
-                .stream()
-                .map(product ->
-                        new ProductResponse(
-                            product.getId(),
-                            product.getName(),
-                            product.getDescription(),
-                            product.getPrice(),
-                            product.getSupplier(),
-                                0
-                        ))
-                .toList();
-    }
     public ProductResponse updateProduct(String id, ProductRequest request){
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Producto no actualizado"));
-        product.setPrice(request.price());
-        product.setSupplier(request.supplier());
         productRepository.save(product);
                 return new ProductResponse(
                         product.getId(),
