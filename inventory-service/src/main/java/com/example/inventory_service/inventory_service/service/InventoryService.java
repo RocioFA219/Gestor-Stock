@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface InventoryService {
     InventoryResponse createStock(InventoryRequest inventoryRequest);
-     InventoryResponse findById(String id);
+     InventoryResponse findById(Long id);
      List<InventoryResponse> getAll();
-     InventoryResponse updateProductInventory(String id, InventoryRequest inventoryRequest);
-     void deleteById(String id);
+     InventoryResponse updateProductInventory(Long id, InventoryRequest inventoryRequest);
+     void deleteById(Long id);
 }

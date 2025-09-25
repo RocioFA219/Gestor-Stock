@@ -9,5 +9,5 @@ import java.time.LocalDateTime;
 
 
 @Builder
-public record InventoryResponse(String id, Integer stock, LocalDateTime entryProduct, LocalDateTime updateProduct) {
+public record InventoryResponse(Long id, Integer stock, LocalDateTime entryProduct, LocalDateTime updateProduct) {
 }

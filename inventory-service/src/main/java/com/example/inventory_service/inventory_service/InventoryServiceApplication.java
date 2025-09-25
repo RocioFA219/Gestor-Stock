@@ -1,10 +1,11 @@
 package com.example.inventory_service.inventory_service;
 
+import jakarta.persistence.EntityListeners;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@EnableMongoAuditing
+@EntityListeners(AuditingEntityListener.class)
 @SpringBootApplication
 public class InventoryServiceApplication {
 

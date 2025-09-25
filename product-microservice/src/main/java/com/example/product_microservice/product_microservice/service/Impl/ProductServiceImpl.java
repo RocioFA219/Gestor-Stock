@@ -25,7 +25,6 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductResponse createProduct(ProductRequest productRequest){
         Product product = Product.builder()
-                .id(UUID.randomUUID().toString())
                 .name(productRequest.name())
                 .description(productRequest.description())
                 .price(productRequest.price())
@@ -67,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
                 })
                 .toList();
     }
-    public ProductResponse getProductById(String id){
+    public ProductResponse getProductById(Long id){
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Producto no encontrado por ese id"));
        InventoryResponse inventoryResponse = inventoryClient.getInventoryById(product.getId());
@@ -80,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
                 inventoryResponse.stock()
         );
     }
-    public ProductResponse updateProduct(String id, ProductRequest request){
+    public ProductResponse updateProduct(Long id, ProductRequest request){
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Producto no actualizado"));
         productRepository.save(product);
@@ -94,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
                 );
     }
 
-    public void deleteById(String id){
+    public void deleteById(Long id){
         productRepository.deleteById(id);
         inventoryClient.deleteInventory(id);
     }

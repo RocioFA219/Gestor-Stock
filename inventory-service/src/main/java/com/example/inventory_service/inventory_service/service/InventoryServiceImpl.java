@@ -3,9 +3,8 @@ package com.example.inventory_service.inventory_service.service;
 import com.example.inventory_service.inventory_service.dto.InventoryRequest;
 import com.example.inventory_service.inventory_service.dto.InventoryResponse;
 import com.example.inventory_service.inventory_service.model.Inventory;
-import com.example.inventory_service.inventory_service.reposiroty.InventoryRepository;
+import com.example.inventory_service.inventory_service.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +18,6 @@ public class InventoryServiceImpl implements InventoryService{
 
     private InventoryResponse mapToResponse(Inventory inventory){
         return InventoryResponse.builder()
-                .id(inventory.getId())
                 .stock(inventory.getStock())
                 .entryProduct(inventory.getEntryProduct())
                 .updateProduct(inventory.getUpdateProduct())
@@ -32,7 +30,6 @@ public class InventoryServiceImpl implements InventoryService{
                 if(inventory == null){
                     //Si el producto no existe, creamos un nuevo registro de inventario
                     inventory = Inventory.builder()
-                            .id(inventoryRequest.id())
                             .stock(inventoryRequest.stock())
                             .entryProduct(LocalDateTime.now())
                             .build();
@@ -45,7 +42,7 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
 
-    public InventoryResponse findById(String id) {
+    public InventoryResponse findById(Long id) {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Inventario no encontrado por ese id"));
         return mapToResponse(inventory);
@@ -58,11 +55,11 @@ public class InventoryServiceImpl implements InventoryService{
                 .toList();
     }
 
-    public InventoryResponse updateProductInventory(String id, InventoryRequest inventoryRequest) {
+    public InventoryResponse updateProductInventory(Long id, InventoryRequest inventoryRequest) {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Inventario no encontrado"));
 
-        //Reemplazamod el stock con el valor que viene en la peticion.
+        //Reemplazamos el stock con el valor que viene en la peticion.
         inventory.setStock(inventoryRequest.stock());
         inventory.setUpdateProduct(LocalDateTime.now());
 
@@ -70,7 +67,7 @@ public class InventoryServiceImpl implements InventoryService{
         return mapToResponse(updated);
     }
 
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         inventoryRepository.deleteById(id);
 
     }
