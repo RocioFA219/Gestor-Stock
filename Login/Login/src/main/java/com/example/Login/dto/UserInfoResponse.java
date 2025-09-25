@@ -1,4 +1,6 @@
 package com.example.Login.dto;
 
-public record UserInfoResponse() {
+import java.util.List;
+
+public record UserInfoResponse(String username, String email, List<String> roles) {
 }
